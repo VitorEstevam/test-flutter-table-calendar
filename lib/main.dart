@@ -37,12 +37,29 @@ class _MyHomePageState extends State<MyHomePage> {
     equals: isSameDay,
     hashCode: getHashCode,
   )..addAll({
-      DateTime(2022, 01, 02): ["aaa", "bbb"],
-      DateTime(2022, 01, 06): ["ccc"],
+      DateTime(2022, 01, 02): [false],
+      DateTime(2022, 01, 03): [true],
+      DateTime(2022, 01, 16): [true],
     });
 
-  List<String> getTasks(DateTime day) {
+  List<bool> getTasks(DateTime day) {
     return tasks[day] ?? [];
+  }
+
+  Color getEventColor(date) {
+    if (tasks[date] != null) {
+      if (date.compareTo(DateTime.now()) < 0) {
+        if (tasks[date][0]) {
+          return Colors.green;
+        } else {
+          return Colors.red;
+        }
+      } else {
+        return Colors.grey;
+      }
+    } else {
+      return Colors.white;
+    }
   }
 
   @override
@@ -56,6 +73,20 @@ class _MyHomePageState extends State<MyHomePage> {
         eventLoader: (day) {
           return getTasks(day);
         },
+        calendarBuilders: CalendarBuilders(
+          singleMarkerBuilder: (context, date, _) {
+            return Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: getEventColor(date),
+              ),
+              height: 15,
+              width: 15,
+              margin: const EdgeInsets.symmetric(horizontal: 1.5),
+            );
+          },
+        ),
+        // test this to differente markers https://stackoverflow.com/questions/62350769/how-to-build-multiple-marker-with-different-colours-by-using-flutter-table-calen
       ),
     );
   }
